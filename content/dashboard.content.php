@@ -2,9 +2,10 @@
 
 	include 'functions.php';
 
-	Twitter();
 
 	const PRINT_XML = 0;
+	const AUTO_TWITTER_POST = 0;
+	const AUTO_TWITTER_SEARCH = 1;
 
 	if(session_verify()) {
 		
@@ -45,5 +46,42 @@
 	} else {
 		header("location:login.php");
 	}	
+	
+	if(AUTO_TWITTER_POST == 1) {
+		$twitterpost = '';
+		$status = 'AutoPost Twitter using CodeBird and Twitter REST API';
+		if(TwitterPost($status) == 200){
+			$twitterpost = "wel succesvol";
+		}
+		else {
+			$twitterpost = "niet succesvol";
+		}
+	}
+	else {
+		$twitterpost = "uitgeschakeld";
+	}
+
+
+	if(AUTO_TWITTER_SEARCH == 1) {
+		
+		global $query;
+		
+		//UTRECHT
+		$geocode = '52.0916670,5.1177780,100mi';
+		$count = '3';
+		$query = 'nederland';
+		
+		$twittersearch = 'ingeschakeld';
+		$reply = TwitterSearchTweets($query, $count, $geocode);
+		
+	} else {
+		$twittersearch = 'uitgeschakeld';
+	}
+
+
+	
+
+
+
 
 ?>
