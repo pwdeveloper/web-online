@@ -1,5 +1,6 @@
 <?php
 
+require_once ('libraries/password.php');
 require_once ('libraries/codebird.php');
 
 /////////////////////////////////////////////		DATABASE
@@ -30,15 +31,14 @@ function db_select_query($param_dbh,$param_query) {
 	return $results;		
 }
 
-function db_select_exec($param_dbh, $username, $password) {
+function db_select_exec($param_dbh, $username) {
 	
-	$sql = "SELECT * FROM users WHERE username = :username AND password = :password";
+	$sql = "SELECT * FROM users WHERE username = :username";
 	
 	$stmt = $param_dbh->prepare($sql);
 	$stmt->setFetchMode(PDO::FETCH_OBJ);
 	
-	$stmt->bindParam(":username", $username);
-	$stmt->bindParam(":password", $password);    
+	$stmt->bindParam(":username", $username);    
     $stmt->execute();
 	$results = $stmt->fetchAll();
 	
@@ -152,8 +152,9 @@ function add_xml_document_DOM($name_file,$title,$priviliges,$organisation) {
 /////////////////////////////////////////////		SESSIONS
 
 function session_verify() {
-	
-	session_start();
+
+	session_start();		
+
 	if(isset($_SESSION['username'])) {
 		return TRUE;
 	}

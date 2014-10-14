@@ -54,7 +54,7 @@
                         </ul>
                     </li>
                     
-                    <li><a href="#logout">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

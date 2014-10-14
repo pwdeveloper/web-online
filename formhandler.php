@@ -4,34 +4,45 @@
 
 	if(isset($_POST['submit'])) {
 		
-		$access = 0;
 		$username = $_POST['username'];
 		$password = $_POST['password'];		
 		
-		$dbh = db_connect("lightwir_oefenen","lightwir_oefenen","lightwir_oefenen","localhost");
+		$clean_username;
+		$clean_password;
 		
-		$query = "SELECT * FROM users WHERE username = '" . $username . "' AND password = '" . $password . "'"; 
-					
-		//$results = db_select_query($dbh,$query);
-		
-		$results = db_select_exec($dbh,$username,$password);
-	
-		if($results != null) {
-			foreach($results as $row) {
-				if($row->username === $username && $row->password === $password) {
-					
-					session_start();					
-					$_SESSION['username'] = $row->username;
-					
-					header("location:dashboard.php");
-					exit();
-						
-				}
-			}			
+		if(preg_match("/^[a-zA-Z0-9_\-]+$/", $username)) {
+			$clean_username = $username;
 		} else {
-			echo "Login Unsuccesfull!";
+			echo "Username format invalid!";
+			exit();
+		}
+		if(preg_match("/^[a-zA-Z0-9_\-]+$/", $password)) {			
+			$clean_password = $password;
+		} else {
+			echo "Password format invalid!";
+			exit();
 		}
 		
+		if(isset($clean_username) && isset($clean_password)) {
+			
+			$dbh = db_connect("lightwir_oefenen","lightwir_oefenen","lightwir_oefenen","localhost");
+			$results = db_select_exec($dbh,$username);
+			
+			if($results[0]->username === $clean_username && password_verify($clean_password, $results[0]->password)) {
+				session_start();
+				session_regenerate_id();										
+				$_SESSION['username'] = $row->username;
+				header("location:dashboard.php");
+				exit();	
+			}
+			else {
+				echo "Login unsuccesfull!";
+				exit();
+			}
+		} else {
+			echo "Please fill out a valid Username and Password!";
+			exit();
+		}		
 	}
 
 ?>
