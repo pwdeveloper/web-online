@@ -1,7 +1,3 @@
-<?php 
-	include 'login.content.php';
-	?>
-
 <html lang="en">
 <head>
     <meta charset="utf-8">

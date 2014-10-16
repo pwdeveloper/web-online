@@ -1,10 +1,7 @@
 <?php
 
-include 'libraries/EpiCurl.php';
-include 'libraries/EpiOAuth.php';
-include 'libraries/EpiTwitter.php';
-
-
+require_once ('libraries/password.php');
+require_once ('libraries/codebird.php');
 
 /////////////////////////////////////////////		DATABASE
 
@@ -34,15 +31,14 @@ function db_select_query($param_dbh,$param_query) {
 	return $results;		
 }
 
-function db_select_exec($param_dbh, $username, $password) {
+function db_select_exec($param_dbh, $username) {
 	
-	$sql = "SELECT * FROM users WHERE username = :username AND password = :password";
+	$sql = "SELECT * FROM users WHERE username = :username";
 	
 	$stmt = $param_dbh->prepare($sql);
 	$stmt->setFetchMode(PDO::FETCH_OBJ);
 	
-	$stmt->bindParam(":username", $username);
-	$stmt->bindParam(":password", $password);    
+	$stmt->bindParam(":username", $username);    
     $stmt->execute();
 	$results = $stmt->fetchAll();
 	
@@ -50,32 +46,49 @@ function db_select_exec($param_dbh, $username, $password) {
 }
 
 
+/////////////////////////////////////////////		TWITTER REST API
 
-function Twitter(){ 
+
+
+
+
+function TwitterPost($status){ 
 	
-	$consumer_key = 'QmlneqbGUilhBCZ5UYeaRghRk';
-	$consumer_secret = 'zOMTQmppg6Y4FD2SYJKE7fCemyxk2XXggE8Z9dcO48OwhxrjKg';
-	$token = '2815296646-zgnhCNPcgmychKwWyZF2fUWMhwiAq0EB54boYG0';
-	$secret= 'kyHEFyYcL0imLhsgCZkLsSFvyY8WJNTIaACCzeJyQtKg5';
-	$twitterObj = new EpiTwitter($consumer_key, $consumer_secret, $token, $secret);
+	$consumer_key = 'PTQc06EY8o9puXHckZgx8aIYH';
+	$consumer_secret = 'CW30hN4vVe4mFFL9ir8WpItao3yQaRNZL18rzkT7snYHSfDlNN';
+	$token = '2815296646-bxbZWhgd8ucsyFTTkn0tKWyZN7JSEadXEemvIS2';
+	$secret= 'BZIuyJ1soVIAILfMavK6dARdZgHWMhS0hMQl0DjkdHLqi';
+		
+	\Codebird\Codebird::setConsumerKey($consumer_key, $consumer_secret); // static, see 'Using multiple Codebird instances'
+
+	$cb = \Codebird\Codebird::getInstance();
+	$cb->setToken($token, $secret);
 	
-	//$twitterObjUnAuth = new EpiTwitter($consumer_key, $consumer_secret);
+	$params = array('status' => $status);
+	$reply = $cb->statuses_update($params);
 	
-	$creds = $twitterObj->get('search/tweets.json', array('q' => 'volkskrant')); 
-	
-	
-	//$timeline_telegraaf = $twitterObj->get('/users/show.json?screen_name=telegraaf');
-	
-	
-	 
-    echo "<pre>";
-    var_dump($creds->response);
-    echo "</pre>";
-	exit();
+	return $reply->httpstatus;	
 	
 }
 
+function TwitterSearchTweets($query, $count, $geocode) {
+	
+	$consumer_key = 'PTQc06EY8o9puXHckZgx8aIYH';
+	$consumer_secret = 'CW30hN4vVe4mFFL9ir8WpItao3yQaRNZL18rzkT7snYHSfDlNN';
+	$token = '2815296646-bxbZWhgd8ucsyFTTkn0tKWyZN7JSEadXEemvIS2';
+	$secret= 'BZIuyJ1soVIAILfMavK6dARdZgHWMhS0hMQl0DjkdHLqi';
+		
+	\Codebird\Codebird::setConsumerKey($consumer_key, $consumer_secret); // static, see 'Using multiple Codebird instances'
 
+	$cb = \Codebird\Codebird::getInstance();
+	$cb->setToken($token, $secret);
+	
+	$params = array('q' => $query, 'count' => $count, 'geocode' => $geocode);
+	$reply = $cb->search_tweets($params);
+		
+	return $reply;	
+	
+}
 
 
 
@@ -139,8 +152,9 @@ function add_xml_document_DOM($name_file,$title,$priviliges,$organisation) {
 /////////////////////////////////////////////		SESSIONS
 
 function session_verify() {
-	
-	session_start();
+
+	session_start();		
+
 	if(isset($_SESSION['username'])) {
 		return TRUE;
 	}
