@@ -1,7 +1,7 @@
 <?php
 
-require_once ('libraries/password.php');
-require_once ('libraries/codebird.php');
+include 'password.php';
+include 'codebird.php';
 
 /////////////////////////////////////////////		DATABASE
 
@@ -161,7 +161,6 @@ function session_verify() {
 	else {
 		return FALSE;
 	}
-	
 }
 
 

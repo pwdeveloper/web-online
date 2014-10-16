@@ -1,7 +1,6 @@
 <?php
 
-	include 'functions.php';
-
+	include 'libraries/functions.php';
 
 	const PRINT_XML = 0;
 	const AUTO_TWITTER_POST = 0;
@@ -23,10 +22,10 @@
 		//write documents to XML using SimpleXML
 		if(isset($results_documents))
 		{
-			instantiate_xml_documents("documents.xml");
+			instantiate_xml_documents("data/documents.xml");
 			
 			foreach($results_documents as $documents) {
-				add_xml_document("documents.xml", $documents->id, $documents->title, $documents->organisation, $documents->priviliges);	
+				add_xml_document("data/documents.xml", $documents->id, $documents->title, $documents->organisation, $documents->priviliges);	
 			}
 			
 		}		
@@ -34,13 +33,13 @@
 		//print XML to screen using SimpleXML
 		if(PRINT_XML == 1) {
 			Header('Content-type: text/xml');		
-			echo print_xml_documents("documents.xml");
+			echo print_xml_documents("data/documents.xml");
 			exit();			
 		}
 		
 		//write documents to XML using DOM
 		
-		add_xml_document_DOM("documents.xml","DOM-titel","DOM-organisation","1");
+		add_xml_document_DOM("data/documents.xml","DOM-titel","DOM-organisation","1");
 		
 	
 	} else {
@@ -79,7 +78,8 @@
 	}
 
 
-	
+
+
 
 
 

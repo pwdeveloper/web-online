@@ -1,6 +1,6 @@
 <?php
 
-	include 'functions.php';
+	include 'libraries/functions.php';
 
 	if(isset($_POST['submit'])) {
 		
@@ -31,7 +31,7 @@
 			if($results[0]->username === $clean_username && password_verify($clean_password, $results[0]->password)) {
 				session_start();
 				session_regenerate_id();										
-				$_SESSION['username'] = $row->username;
+				$_SESSION['username'] = $results[0]->username;
 				header("location:dashboard.php");
 				exit();	
 			}
